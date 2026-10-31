@@ -21,7 +21,7 @@ public final class MsgConfig {
     private static MsgConfig instance;
 
     /** Base url of the deployed Cloudflare Worker, without a trailing slash. */
-    public String baseUrl = "https://crc-msg-board.YOUR-SUBDOMAIN.workers.dev";
+    public String baseUrl = "https://crc-msg-board.179544143.workers.dev";
     /** Connect timeout for backend calls, in seconds. */
     public int timeoutSeconds = 10;
 
