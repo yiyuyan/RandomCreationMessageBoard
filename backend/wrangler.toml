@@ -5,11 +5,10 @@ main = "src/index.ts"
 compatibility_date = "2026-10-30"
 
 [vars]
-# Development convenience for the time capsule: when "true", a capsule may be
-# created with an openAt in the past, so it can be opened immediately while
-# debugging instead of waiting for the clock. Set to "false" (or remove) to
-# restore production semantics: every capsule must open in the future.
-ALLOW_PAST_CAPSULE_OPEN = "true"
+# Off: every capsule must open in the future. Turning this on ("true") lets a capsule
+# be created with a past openAt, which is only useful while debugging the mod - note
+# that it weakens the time-capsule rule for anyone using this Worker.
+ALLOW_PAST_CAPSULE_OPEN = "false"
 
 # Optional storage cap: delete plain messages older than this many days.
 # "0" keeps them forever (current behaviour). Set e.g. "90" on a busy board to bound

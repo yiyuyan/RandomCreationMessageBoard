@@ -41,8 +41,12 @@ public class TimeCapsuleScreen extends Screen {
     private final InteractionHand hand;
     private final String messageId;
     private final long openAt;
-    private final CalendarPanel calendar =
-            new CalendarPanel(DEV ? LocalDate.now() : LocalDate.now().plusDays(1));
+    /**
+     * Opens on tomorrow by default in both modes: today 00:00:00 is already in the past, so it
+     * would only be accepted by the development backdating window. The dev shortcuts still
+     * override this instantly.
+     */
+    private final CalendarPanel calendar = new CalendarPanel(LocalDate.now().plusDays(1));
 
     /**
      * Development only: an explicit opening instant (epoch millis) that overrides the
@@ -131,13 +135,15 @@ public class TimeCapsuleScreen extends Screen {
                 .bounds(left + panelW / 2 - 40, top + panelH - 30, 80, 20).build());
     }
 
-    /** The instant the capsule will open: debug override first, otherwise the chosen date. */
+    /**
+     * The instant the capsule will open: the selected calendar day at 00:00:00, unless a
+     * development shortcut (or picking a new day, which clears it) temporarily overrides it.
+     */
     private long effectiveOpenAt() {
-        if (devOpenAt == null) {
-            devOpenAt = System.currentTimeMillis();
+        if (devOpenAt != null) {
+            return devOpenAt;
         }
-        return devOpenAt;
-        //return calendar.selected().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        return calendar.selected().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
     /**
