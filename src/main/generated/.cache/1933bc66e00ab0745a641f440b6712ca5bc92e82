@@ -1,0 +1,5 @@
+// 26.1.2	-999999999-01-01T00:00:00	RandomCreationMessageBoard/Item assets (models + item definitions)
+4cb60b3494744570c2eb3d902413197cb9f4db70 assets/crc_msg_board/items/copper_time_capsules.json
+abc246d1b022578349fc69af6684bd3583df7ec6 assets/crc_msg_board/items/msg_board.json
+497f9eef91346942a353f9acafad35462ad4dc5e assets/crc_msg_board/models/item/copper_time_capsules.json
+66eb7270a7c06b43aba4bf34864842480c5ded25 assets/crc_msg_board/models/item/msg_board.json

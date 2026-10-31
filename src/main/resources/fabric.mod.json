@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "crc_msg_board",
+  "version": "${version}",
+  "name": "RandomCreationMessageBoard",
+  "description": "Why don't you take a break?",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "cn.ksmcbrigade.mb.client.MsgBoardModClient"
+    ],
+    "main": [
+      "cn.ksmcbrigade.mb.MsgBoardMod"
+    ],
+    "fabric-datagen": [
+      "cn.ksmcbrigade.mb.datagen.MsgBoardDataGen"
+    ]
+  },
+  "mixins": [
+    "crc_msg_board.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}

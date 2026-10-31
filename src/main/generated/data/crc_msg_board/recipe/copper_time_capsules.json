@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "H": "minecraft:heart_of_the_sea"
+  },
+  "pattern": [
+    " C ",
+    "CHC",
+    " C "
+  ],
+  "result": {
+    "id": "crc_msg_board:copper_time_capsules"
+  }
+}

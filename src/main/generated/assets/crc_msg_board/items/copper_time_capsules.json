@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "crc_msg_board:item/copper_time_capsules"
+  }
+}

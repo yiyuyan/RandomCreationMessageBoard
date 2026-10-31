@@ -1,0 +1,13 @@
+{
+  // Separate program for the Node-based unit tests: `@types/node` supplies the
+  // `node:test` / `node:assert` globals and must not be mixed with
+  // `@cloudflare/workers-types` (their global declarations collide).
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  },
+  "include": ["tests/**/*.ts"],
+  "exclude": ["node_modules"]
+}

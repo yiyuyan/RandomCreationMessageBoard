@@ -1,0 +1,34 @@
+# Cloudflare Worker for the CRC message board.
+# Bindings are declared here; the schema lives in schema.sql.
+name = "crc-msg-board"
+main = "src/index.ts"
+compatibility_date = "2026-10-30"
+
+[vars]
+# Development convenience for the time capsule: when "true", a capsule may be
+# created with an openAt in the past, so it can be opened immediately while
+# debugging instead of waiting for the clock. Set to "false" (or remove) to
+# restore production semantics: every capsule must open in the future.
+ALLOW_PAST_CAPSULE_OPEN = "true"
+
+# Optional storage cap: delete plain messages older than this many days.
+# "0" keeps them forever (current behaviour). Set e.g. "90" on a busy board to bound
+# total storage; capsules are handled separately by their 30 minute read retention.
+NORMAL_RETENTION_DAYS = "0"
+
+# Workers Logs + Traces (no extra binding needed).
+[observability]
+enabled = true
+
+[observability.traces]
+enabled = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "crc_msg_board"
+database_id = "bd898f90-31d0-457e-b2c8-d39d52117695"
+
+# Backstop only: the purge usually happens inline on the next POST. Running hourly
+# instead of every 5 minutes cuts scheduled invocations from 288/day to 24/day.
+[triggers]
+crons = ["0 * * * *"]
