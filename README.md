@@ -64,24 +64,9 @@ Fabric 模组（Minecraft **26.1.2**，Java 25），添加「留言板」与「�
 
 首次运行会生成 `config/crc_msg_board.json`：
 
-```json
-{
-  "baseUrl": "https://crc-msg-board.YOUR-SUBDOMAIN.workers.dev",
-  "timeoutSeconds": 10
-}
-```
-
 把 `baseUrl` 改成你部署后的 Worker 地址即可，无需重启（下一次请求生效）。
 
 ## 后端
-
-**已部署：**
-
-| 项 | 值 |
-|---|---|
-| Worker URL | `https://crc-msg-board.179544143.workers.dev` |
-| D1 数据库 | `crc_msg_board` / `bd898f90-31d0-457e-b2c8-d39d52117695`（APAC） |
-| 认证方式 | `wrangler login`（OAuth，凭据在 `~/.wrangler`） |
 
 开发环境已写入 `run/config/crc_msg_board.json`，直接指向上面这个 URL；正式客户端把同样的内容放进取到的 `config/crc_msg_board.json` 即可。
 
@@ -138,13 +123,6 @@ npx.cmd wrangler d1 execute crc_msg_board --file=schema.sql --remote --yes
 | `MsgBoardLangProvider` | `assets/crc_msg_board/lang/{en_us,zh_cn}.json` |
 
 `ItemAssetProvider` 是自定义 `DataProvider`：26.1.2 的 `ItemModelGenerators` 只公开 `run()`，没有给模组用的逐物品生成方法，所以两个文件直接按规范写出。
-
-## 已知限制
-
-- **限流可绕过**：`playerUuid` 由客户端提供，恶意客户端可伪造不同 UUID。若要真正防刷，需要接入 Minecraft 服务端会话校验或在 Worker 增加按 IP 的限制。
-- Worker 的限流是「先查后写」两条 D1 语句，非原子；同一 UUID 的并发请求理论上可能都通过（README 里给了 Durable Object 方案）。
-- 无按 IP 限流（schema 里没有 IP 列）。
-- 日历选择日期时使用本地时区（`atStartOfDay`），与列表查询用的 `tzOffset` 一致。
 
 ## 构建
 
