@@ -12,7 +12,7 @@ public class MsgBoardModClient implements ClientModInitializer {
     public void onInitializeClient() {
         // Development aid: only active when the marker file is present.
         Path smokeFlag = FabricLoader.getInstance().getConfigDir().resolve("crc_msg_board_smoke.flag");
-        if (Files.exists(smokeFlag)) {
+        if (Files.exists(smokeFlag) && FabricLoader.getInstance().isDevelopmentEnvironment()) {
             SmokeTest.register();
         }
     }

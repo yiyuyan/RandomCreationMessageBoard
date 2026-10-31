@@ -8,7 +8,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.MultiLineEditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.language.I18n;
@@ -54,7 +54,7 @@ public class TimeCapsuleScreen extends Screen {
     /** Message body already stored on the item; when non-empty the viewer stays offline. */
     private String cachedText;
 
-    private EditBox input;
+    private MultiLineEditBox input;
     private boolean calendarOpen;
     private boolean loading;
     private String status = "";
@@ -95,35 +95,40 @@ public class TimeCapsuleScreen extends Screen {
     }
 
     private void initCompose() {
-        panelW = 320;
-        panelH = DEV ? 250 : 234;
+        panelW = 340;
+        // Keep the panel inside the GUI area: at 2x scale a 480px window is only 240 units tall.
+        panelH = Math.min(DEV ? 220 : 206, height - 16);
         left = (width - panelW) / 2;
         top = (height - panelH) / 2;
         calX = left + 20;
-        calY = top + 104;
+        // The calendar behaves like a popup: keep it fully on screen, drawn above the widgets.
+        calY = Math.min(top + 156, height - CalendarPanel.HEIGHT - 4);
 
-        input = new EditBox(font, left + 20, top + 44, panelW - 40, 18,
-                Component.translatable("crc_msg_board.capsule.content"));
-        input.setMaxLength(MAX_LENGTH);
-        input.setHint(Component.translatable("crc_msg_board.capsule.hint"));
+        // Multi-line: capsules invite longer text, and Enter should insert a line break.
+        input = MultiLineEditBox.builder()
+                .setX(left + 20)
+                .setY(top + 42)
+                .setPlaceholder(Component.translatable("crc_msg_board.capsule.hint"))
+                .build(font, panelW - 40, 64, Component.translatable("crc_msg_board.capsule.content"));
+        input.setCharacterLimit(MAX_LENGTH);
         addRenderableWidget(input);
 
         addRenderableWidget(Button.builder(Component.translatable("crc_msg_board.capsule.pick_time"), b -> {
             calendarOpen = !calendarOpen;
-        }).bounds(left + 20, top + 70, 72, 18).build());
+        }).bounds(left + 20, top + 112, 72, 18).build());
 
         if (DEV) {
             // Debug shortcuts: +10 s relative to the currently selected instant, and "now".
             addRenderableWidget(Button.builder(Component.translatable("crc_msg_board.capsule.plus10"), b -> {
                 devOpenAt = effectiveOpenAt() + 10_000L;
-            }).bounds(left + 96, top + 70, 52, 18).build());
+            }).bounds(left + 96, top + 112, 52, 18).build());
             addRenderableWidget(Button.builder(Component.translatable("crc_msg_board.capsule.now"), b -> {
                 devOpenAt = System.currentTimeMillis() - 1_000L;
-            }).bounds(left + 152, top + 70, 42, 18).build());
+            }).bounds(left + 152, top + 112, 42, 18).build());
         }
 
         addRenderableWidget(Button.builder(Component.translatable("crc_msg_board.capsule.done"), b -> submit())
-                .bounds(left + panelW / 2 - 40, top + panelH - 34, 80, 20).build());
+                .bounds(left + panelW / 2 - 40, top + panelH - 30, 80, 20).build());
     }
 
     /** The instant the capsule will open: debug override first, otherwise the chosen date. */
@@ -245,31 +250,31 @@ public class TimeCapsuleScreen extends Screen {
         }
 
         super.extractRenderState(gg, mouseX, mouseY, partialTick);
+
+        // The calendar is a popup: draw it last so widgets never clip or cover it.
+        if (mode == Mode.COMPOSE && calendarOpen) {
+            calendar.draw(gg, font, calX, calY);
+        }
     }
 
     private void drawCompose(GuiGraphicsExtractor gg) {
-        gg.text(font, Component.translatable("crc_msg_board.capsule.content"), left + 20, top + 32, Ui.TEXT_DIM);
-        String counter = (input.getValue() == null ? 0 : input.getValue().length()) + " / " + MAX_LENGTH;
-        gg.text(font, counter, left + panelW - 20 - font.width(counter), top + 32, Ui.TEXT_DIM);
+        // The multi-line box renders its own "n / limit" counter, so only the label is drawn here.
+        gg.text(font, Component.translatable("crc_msg_board.capsule.content"), left + 20, top + 28, Ui.TEXT_DIM);
+
+        String line = loading ? I18n.get("crc_msg_board.screen.loading") : status;
+        if (!line.isEmpty()) {
+            gg.text(font, line, left + 20, top + 134, Ui.TEXT_DIM);
+        }
 
         long preview = effectiveOpenAt();
         boolean validTime = DEV
                 ? preview >= System.currentTimeMillis() - DEV_MAX_BACKDATE_MS
                 : preview > System.currentTimeMillis();
         gg.text(font, Component.translatable("crc_msg_board.capsule.open_at", Ui.formatMillis(preview)),
-                left + 20, top + 94, validTime ? Ui.ACCENT : 0xFFFF6B6B);
+                left + 20, top + 152, validTime ? Ui.ACCENT : 0xFFFF6B6B);
         if (DEV) {
             Component devHint = Component.translatable("crc_msg_board.capsule.dev_hint");
-            gg.text(font, devHint, left + panelW - 20 - font.width(devHint), top + 94, 0xFF8FE38F);
-        }
-
-        if (calendarOpen) {
-            calendar.draw(gg, font, calX, calY);
-        }
-
-        String line = loading ? I18n.get("crc_msg_board.screen.loading") : status;
-        if (!line.isEmpty()) {
-            gg.text(font, line, left + 20, top + panelH - 44, Ui.TEXT_DIM);
+            gg.text(font, devHint, left + panelW - 20 - font.width(devHint), top + 152, 0xFF8FE38F);
         }
     }
 

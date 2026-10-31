@@ -58,7 +58,7 @@ public final class Ui {
     /** Always-on feedback: every send attempt reports success or failure. */
     public static void toast(boolean success, String text) {
         Minecraft minecraft = Minecraft.getInstance();
-        Component title = Component.literal(success ? "留言板" : "留言板");
+        Component title = Component.translatable("crc_msg_board.board.title");
         SystemToast.add(minecraft.getToastManager(), TOAST_ID, title, Component.literal(text));
     }
 

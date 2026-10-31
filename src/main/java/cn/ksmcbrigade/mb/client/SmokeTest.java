@@ -33,7 +33,7 @@ public final class SmokeTest {
 
     public static void register() {
         MsgBoardMod.LOGGER.info("[smoke] screen smoke test enabled");
-        ClientTickEvents.END_CLIENT_TICK.register(client -> step(client));
+        ClientTickEvents.END_CLIENT_TICK.register(SmokeTest::step);
     }
 
     private static void step(Minecraft client) {
@@ -131,7 +131,7 @@ public final class SmokeTest {
                     client.setScreen(TimeCapsuleScreen.composer(InteractionHand.MAIN_HAND));
                     capsule = (TimeCapsuleScreen) client.screen;
                     if (capsule != null) {
-                        capsule.devSealImmediately("开发模式：立刻可读的胶囊");
+                        capsule.devSealImmediately("开发模式：立刻可读的胶囊\n第二行（多行输入测试）");
                     }
                 }
             }
