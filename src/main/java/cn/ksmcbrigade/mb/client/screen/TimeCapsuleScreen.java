@@ -133,10 +133,11 @@ public class TimeCapsuleScreen extends Screen {
 
     /** The instant the capsule will open: debug override first, otherwise the chosen date. */
     private long effectiveOpenAt() {
-        if (devOpenAt != null) {
-            return devOpenAt;
+        if (devOpenAt == null) {
+            devOpenAt = System.currentTimeMillis();
         }
-        return calendar.selected().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        return devOpenAt;
+        //return calendar.selected().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
     /**
